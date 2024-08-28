@@ -1,0 +1,7 @@
+1. Set environment
+2. Prepare Symfony Skeleton project
+3. Add necessary bundles:
+    - composer require symfony/maker-bundle --dev
+    - composer require symfony/serializer-pack
+    - composer require symfony/test-pack --dev
+4. UI (cli command app:fees) + app frame
