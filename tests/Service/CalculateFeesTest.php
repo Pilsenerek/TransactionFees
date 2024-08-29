@@ -6,7 +6,7 @@ namespace App\Tests\Service;
 use App\Model\Transaction;
 use App\Service\CalculateFees;
 use App\Service\CurrencyRateProvider;
-use App\Service\GeoHelper;
+use App\Service\GeoLocation;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
@@ -16,7 +16,7 @@ class CalculateFeesTest extends TestCase
     /**
      * @var array|string[] BIN code => is EU
      */
-    private array $mockGeoHelperResponses = [
+    private array $mockGeoLocationResponses = [
         ['45717360', true],
         ['516793', true],
         ['45417360', true],
@@ -33,6 +33,7 @@ class CalculateFeesTest extends TestCase
         ['USD', 1.1088],
         ['JPY', 160.36],
         ['GBP', 0.84175],
+        ['XYZ', 0],
     ];
 
     /**
@@ -47,6 +48,10 @@ class CalculateFeesTest extends TestCase
             ['41417360', 130.00, 'USD', 1.18],
             ['4745030', 2000.00, 'GBP', 23.77],
             ['1234567', 1000.00, 'EUR', 20.00],
+            ['1234567', 1000.00, 'XYZ', 20.00],
+            ['4745030', 1000.00, 'XYZ', 10.00],
+            ['1234567', 1234.33, 'USD', 22.27],
+            ['4745030', 1234.33, 'USD', 11.14],
         ];
     }
 
@@ -56,12 +61,12 @@ class CalculateFeesTest extends TestCase
     #[DataProvider('provideData')]
     public function testCalculate(string $bin, float $amount, string $currency, float $expCommission): void
     {
-        $geoHelper = $this->createStub(GeoHelper::class);
-        $geoHelper->method('isEU')->willReturnMap($this->mockGeoHelperResponses);
+        $geoHelper = $this->createStub(GeoLocation::class);
+        $geoHelper->method('isEU')->willReturnMap($this->mockGeoLocationResponses);
         $currencyRateProvider = $this->createStub(CurrencyRateProvider::class);
         $currencyRateProvider->method('retrieveRate')->willReturnMap($this->mockCurrencyRateResponses);
         $calculateFees = new CalculateFees($currencyRateProvider, $geoHelper);
-        $transaction = new Transaction($bin, $amount * 100, $currency);
+        $transaction = new Transaction($bin, (int)($amount * 100), $currency);
         $calculateFees->calculate($transaction);
 
         $this->assertEquals($expCommission * 100, $transaction->getCommission());

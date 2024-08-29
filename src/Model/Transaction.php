@@ -14,57 +14,36 @@ class Transaction implements \Stringable
     {
     }
 
-    /**
-     * @return string
-     */
     public function getBin(): string
     {
         return $this->bin;
     }
 
-    /**
-     * @return int
-     */
     public function getAmount(): int
     {
         return $this->amount;
     }
 
-    /**
-     * @return float|null
-     */
     public function printAmount(): ?string
     {
-        return number_format($this->amount / 100, 2, '.', ' ');
+        return \number_format($this->amount / 100, 2, '.', ' ');
     }
 
-    /**
-     * @return string
-     */
     public function getCurrency(): string
     {
         return $this->currency;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCommission(): ?int
     {
         return $this->commission;
     }
 
-    /**
-     * @return float|null
-     */
     public function printCommission(): ?string
     {
-        return number_format($this->commission / 100, 2, '.', ' ');
+        return \number_format($this->commission / 100, 2, '.', ' ');
     }
 
-    /**
-     * @param int|null $commission
-     */
     public function setCommission(?int $commission): void
     {
         $this->commission = $commission;

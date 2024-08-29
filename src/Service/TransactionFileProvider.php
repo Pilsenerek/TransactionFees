@@ -7,7 +7,7 @@ use App\Model\Transaction;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
-class TransactionFileProvider implements TransactionProvider
+class TransactionFileProvider
 {
     public function __construct(private DenormalizerInterface $denormalizer)
     {
@@ -20,14 +20,14 @@ class TransactionFileProvider implements TransactionProvider
      */
     public function fetchTransactions(string $filePath): \Generator
     {
-        $fileHandle = fopen(__DIR__ . '/../../' . $filePath, 'r');
+        $fileHandle = \fopen(__DIR__ . '/../../' . $filePath, 'r');
         $count = 0;
-        while (!feof($fileHandle)) {
-            $line = fgets($fileHandle);
+        while (!\feof($fileHandle)) {
+            $line = \fgets($fileHandle);
 
             yield $this->createTransaction($line, ++$count);
         }
-        fclose($fileHandle);
+        \fclose($fileHandle);
     }
 
     /**
@@ -36,7 +36,7 @@ class TransactionFileProvider implements TransactionProvider
      */
     private function createTransaction(string $line, int $count): Transaction
     {
-        $transactionArray = json_decode($line, true);
+        $transactionArray = \json_decode($line, true);
         if (empty($transactionArray)) {
             throw new \Exception(sprintf('File parsing error in line %s', $count));
         }

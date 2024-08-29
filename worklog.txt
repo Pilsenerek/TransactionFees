@@ -1,12 +1,15 @@
-1. Set environment
-2. Prepare Symfony Skeleton project
-3. Add necessary bundles:
+1. Analise task & make a plan 1h
+1. Set environment 0,5h
+2. Prepare Symfony skeleton project 0,25h
+3. Add necessary bundles: 0,25
     - composer require symfony/maker-bundle --dev
     - composer require symfony/serializer-pack
     - composer require symfony/test-pack --dev
-4. UI (cli command app:fees) + app frame
-5. Parsing input file service
-6. Calculating commissions service + unit test
-  - problem 1 - API for rates requires key, switch to another API
+4. UI (cli command app:fees) + app frame 0,5h
+5. Parsing input file service 1h
+6. Calculating commissions service + supporting services + unit test 4h
+  - problem 1 - API for rates requires access key, switch to another API is needed
   - problem 2 - API for country codes has limit 5 requests per hour
-7. Tests & reviews
+7. Tests & reviews 0,5h
+
+Time summary: 8h

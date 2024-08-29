@@ -13,24 +13,24 @@ class CalculateFees
 
     public function __construct(
         private CurrencyRateProvider $currencyRateProvider,
-        private GeoHelper            $geoHelper
+        private GeoLocation $geoLocation
     )
     {
     }
 
     public function calculate(Transaction $transaction): Transaction
     {
-        $isEu = $this->geoHelper->isEu($transaction->getBin());
+        $isEU = $this->geoLocation->isEu($transaction->getBin());
         $rate = $this->currencyRateProvider->retrieveRate($transaction->getCurrency());
         $base = $transaction->getAmount();
         if (!empty($rate) && $transaction->getCurrency() !== self::BASE_CURRENCY) {
             $base = $base / $rate;
         }
         $commRate = self::NO_UE_FEE_RATE;
-        if ($isEu) {
+        if ($isEU) {
             $commRate = self::UE_FEE_RATE;
         }
-        $commission = (int)ceil($commRate * $base);
+        $commission = (int)\ceil($commRate * $base);
         $transaction->setCommission($commission);
 
         return $transaction;

@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-class GeoHelper
+class GeoLocation
 {
-
     /**
      * @todo move it into configuration
      */
@@ -40,15 +39,15 @@ class GeoHelper
     ];
 
     public function __construct(
-        private BINProvider $binProvider,
+        private BINInfoProvider $binInfoProvider,
     )
     {
     }
 
-    public function isEu(string $bin): bool
+    public function isEu(string $BIN): bool
     {
-        $countryCode = $this->binProvider->retrieveCountryCode($bin);
-        if (in_array($countryCode, $this->ueCountries)) {
+        $countryCode = $this->binInfoProvider->retrieveCountryCode($BIN);
+        if (\in_array($countryCode, $this->ueCountries)) {
 
             return true;
         }

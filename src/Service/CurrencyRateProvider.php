@@ -5,6 +5,5 @@ namespace App\Service;
 
 interface CurrencyRateProvider
 {
-
     public function retrieveRate(string $currency): float;
 }
