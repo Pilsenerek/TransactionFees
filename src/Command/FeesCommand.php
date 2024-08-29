@@ -1,7 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Service\CalculateFees;
+use App\Service\TransactionProvider;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -15,7 +18,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class FeesCommand extends Command
 {
-    public function __construct()
+    public function __construct(
+        private TransactionProvider $transactionProvider,
+        private CalculateFees       $calculateFees
+    )
     {
         parent::__construct();
     }
@@ -23,27 +29,21 @@ class FeesCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('inputFile', InputArgument::REQUIRED, 'File with transactions')
-        ;
+            ->addArgument('inputFile', InputArgument::REQUIRED, 'File with transactions');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $inputFile = $input->getArgument('inputFile');
-
-        //@todo implement calculation core
-        $data = range(1,5);
-
-        $io->table(['Amount', 'Currency', 'Bin', 'Commission'], []);
-        foreach ($data as $rec) {
-            $io->table([], [
-                    [100.34, 'CHF', '2345', 2.34],
-                ]
-            );
+        $io->title(sprintf('Calculating commissions for %s file is started', $inputFile));
+        $transactions = $this->transactionProvider->fetchTransactions($inputFile);
+        $io->table(['Amount', 'Currency', 'BIN', 'Commission'], []);
+        foreach ($transactions as $transaction) {
+            $this->calculateFees->calculate($transaction);
+            $io->writeln((string)$transaction);
         }
-
-        $io->success(sprintf('Calculating commissions for %s file is finished', $inputFile));
+        $io->success('Done!');
 
         return Command::SUCCESS;
     }
